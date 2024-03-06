@@ -6,7 +6,7 @@ import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
 import * as Utils from './utils.js';
 import {BluetoothController} from './bluetooth.js';
-import {PYTHON_SCRIPT_PATH, BTCTL_SCRIPT_PATH, UPOWER_SCRIPT_PATH, TOGGLE_SCRIPT_PATH} from './constants.js';
+import {PYTHON_SCRIPT_PATH, BTCTL_SCRIPT_PATH, ZMK_SCRIPT_PATH, UPOWER_SCRIPT_PATH, TOGGLE_SCRIPT_PATH} from './constants.js';
 import {IndicatorController} from './indicator.js';
 import {SettingsController} from './settings.js';
 
@@ -25,8 +25,6 @@ export default class BluetoothBatteryIndicatorExtension extends Extension {
         this._timeOut = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 10, () => {
             this._connectSignals();
         });
-
-        this._pythonRunner = new Utils.PythonRunner();
     }
 
     _connectSignals() {
@@ -90,6 +88,10 @@ export default class BluetoothBatteryIndicatorExtension extends Extension {
 
                 case 'bluetoothctl':
                     this._getBatteryLevelBluetoothctl(device.mac, index)
+                    break;
+
+                case 'zmk':
+                    this._getBatteryLevelZmk(device.mac, index)
                     break;
 
                 case 'upower':
@@ -159,6 +161,16 @@ export default class BluetoothBatteryIndicatorExtension extends Extension {
 
         // Utils.runPythonScript can run any arbitrary script
         this._pythonRunner.runPythonScript(
+          [shellLocation, btMacAddress],
+          this._setPercentFromScript(index)
+        )
+    }
+
+    _getBatteryLevelZmk(btMacAddress, index) {
+        const shellLocation = Me.dir.get_child(ZMK_SCRIPT_PATH).get_path();
+
+        // Utils.runPythonScript can run any arbitrary script
+        this.runPythonScript(
           [shellLocation, btMacAddress],
           this._setPercentFromScript(index)
         )

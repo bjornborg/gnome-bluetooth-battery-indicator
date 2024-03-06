@@ -282,6 +282,7 @@ export default GObject.registerClass(
             const sources = [
                 { key: 'python-script', text: _('Python script') },
                 { key: 'bluetoothctl', text: _('Bluetoothctl') },
+                { key: 'zmk', text: _('Zmk split') },
                 { key: 'upower', text: _('UPower') }
             ];
 
