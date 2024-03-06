@@ -7,7 +7,7 @@ const PopupMenu = imports.ui.popupMenu;
 const Me = ExtensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 const { BluetoothController } = Me.imports.bluetooth;
-const { PYTHON_SCRIPT_PATH, BTCTL_SCRIPT_PATH, UPOWER_SCRIPT_PATH, TOGGLE_SCRIPT_PATH } = Me.imports.constants;
+const { PYTHON_SCRIPT_PATH, BTCTL_SCRIPT_PATH, ZMK_SHELL_SCRIPT_PATH, ZMK_PYTHON_SCRIPT_PATH, UPOWER_SCRIPT_PATH, TOGGLE_SCRIPT_PATH } = Me.imports.constants;
 const { IndicatorController } = Me.imports.indicator;
 const { SettingsController } = Me.imports.settings;
 
@@ -99,6 +99,10 @@ class Extension {
                     this._getBatteryLevelBluetoothctl(device.mac, index)
                     break;
 
+                case 'zmk':
+                    this._getBatteryLevelZmk(device.mac, index)
+                    break;
+
                 case 'upower':
                     this._getBatteryLevelUpower(device.mac, index);
                     break;
@@ -167,6 +171,17 @@ class Extension {
         // Utils.runPythonScript can run any arbitrary script
         Utils.runPythonScript(
           [shellLocation, btMacAddress],
+          this._setPercentFromScript(index)
+        )
+    }
+
+    _getBatteryLevelZmk(btMacAddress, index) {
+        const shellLocation = Me.dir.get_child(ZMK_SHELL_SCRIPT_PATH).get_path();
+        const pyLocation = Me.dir.get_child(ZMK_PYTHON_SCRIPT_PATH).get_path();
+
+        // Utils.runPythonScript can run any arbitrary script
+        Utils.runPythonScript(
+          [shellLocation, btMacAddress, pyLocation],
           this._setPercentFromScript(index)
         )
     }
