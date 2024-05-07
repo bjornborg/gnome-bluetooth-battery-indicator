@@ -6,7 +6,7 @@ import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
 import * as Utils from './utils.js';
 import { BluetoothController } from './bluetooth.js';
-import { PYTHON_SCRIPT_PATH, BTCTL_SCRIPT_PATH, UPOWER_SCRIPT_PATH, TOGGLE_SCRIPT_PATH } from './constants.js';
+import { PYTHON_SCRIPT_PATH, BTCTL_SCRIPT_PATH, ZMK_PYTHON_SCRIPT_PATH, ZMK_SHELL_SCRIPT_PATH, UPOWER_SCRIPT_PATH, TOGGLE_SCRIPT_PATH } from './constants.js';
 import { IndicatorController } from './indicator.js';
 import { SettingsController } from './settings.js';
 
@@ -169,11 +169,11 @@ export default class BluetoothBatteryIndicatorExtension extends Extension {
   }
 
   _getBatteryLevelZmk(btMacAddress, index) {
-    const shellLocation = Me.dir.get_child(ZMK_SHELL_SCRIPT_PATH).get_path();
-    const pyLocation = Me.dir.get_child(ZMK_PYTHON_SCRIPT_PATH).get_path();
+    const shellLocation = this.dir.get_child(ZMK_SHELL_SCRIPT_PATH).get_path();
+    const pyLocation = this.dir.get_child(ZMK_PYTHON_SCRIPT_PATH).get_path();
 
     // Utils.runPythonScript can run any arbitrary script
-    Utils.runPythonScript(
+    this._pythonRunner.runPythonScript(
       [shellLocation, btMacAddress, pyLocation],
       this._setPercentFromScript(index)
     )
