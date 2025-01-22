@@ -8,7 +8,7 @@ if [[ $connected == "yes" ]]; then
   if [ -z "$percent_central" ]; then
     echo "?"
   else
-    echo "$percent_central%/$percent_periperal%"
+    echo "$percent_central%|$percent_periperal%"
   fi
 elif [[ $connected == "no" ]]; then
   echo "off"
